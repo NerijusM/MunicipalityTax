@@ -29,3 +29,6 @@ Application has no visible user interface, requests are given directly to applic
 Also, there should be a consumer service created to demonstrate how the producer service can be used.
 Bonus tasks - write code tests
 Please try to manage the task in separate logical Git commits.
+
+
+

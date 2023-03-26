@@ -42,8 +42,9 @@ public class MunicipalityTaxService : IMunicipalityTaxService
     {
         try
         {
-            //FIXME: - make it automaticaly generated
-            municipalityTax.SetNewId();
+
+            if (await IsHaveValueFor(municipalityTax))
+                return Result.Fail("The tax for this municipality already exists during that period. Please update the post");
             await _municipalityTaxRepository.AddAsync(municipalityTax);
             return Result.Success();
         }
@@ -96,5 +97,15 @@ public class MunicipalityTaxService : IMunicipalityTaxService
         };
 
         return shedulles;
+    }
+
+    private async Task<bool> IsHaveValueFor(MunicipalityTax municipalityTax)
+    {
+        var result = await _municipalityTaxRepository
+                    .FindAsync(x => x.MunicipalityTitle == municipalityTax.MunicipalityTitle &&
+                               x.TaxFrom == municipalityTax.TaxFrom &&
+                               x.TaxUp == municipalityTax.TaxUp &&
+                               x.Type == municipalityTax.Type);
+        return result.Any();
     }
 }

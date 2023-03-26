@@ -1,6 +1,9 @@
 using Core.Entities;
+using Core.Interfaces;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
+using Core.Types;
+using Infrastructure.TaxShedulers;
 using Shared;
 
 namespace Infrastructure.Services;
@@ -11,6 +14,13 @@ public class MunicipalityTaxService : IMunicipalityTaxService
     public MunicipalityTaxService(IMunicipalityTaxRepository municipalityTaxRepository)
     {
         _municipalityTaxRepository = municipalityTaxRepository;
+    }
+
+    public async Task<Result<IEnumerable<MunicipalityTax>>> MunicipalityTaxList()
+    {
+        var result = await _municipalityTaxRepository.GetAllAsync();
+
+        return Result.Success(result ?? Enumerable.Empty<MunicipalityTax>());
     }
 
     public async Task<Result> DeleteMunicipalityTax(MunicipalityTax municipalityTax)
@@ -26,15 +36,13 @@ public class MunicipalityTaxService : IMunicipalityTaxService
         }
     }
 
-    public Task<Result<MunicipalityTax>> MunicipalityTaxByTitleandDate(string title, DateTime date)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<Result> SaveMunicipalityTax(MunicipalityTax municipalityTax)
     {
         try
         {
+            //FIXME: - make it automaticaly generated
+            municipalityTax.SetNewId();
             await _municipalityTaxRepository.AddAsync(municipalityTax);
             return Result.Success();
         }
@@ -48,12 +56,45 @@ public class MunicipalityTaxService : IMunicipalityTaxService
     {
         try
         {
-            await _municipalityTaxRepository.UpdateAsync(municipalityTax);
-            return Result.Success();
+            var result = await _municipalityTaxRepository.UpdateMunicipalityTaxAsync(municipalityTax);
+            return result;
         }
         catch (Exception ex)
         {
             return Result.Fail($"(Error while updating MunicipalityTax to db error: {ex.Message})");
         }
     }
+
+
+    public Result<decimal> MunicipalityTaxByTitleandDate(string title, DateTime date)
+    {
+        IEnumerable<ITaxSheduler> shedulles = TaxSheduler(title, date);
+
+        var result = shedulles.Where(x => x.IsUsed())
+                      .OrderBy(a => a.Type.Priority());
+
+        if (!result.Any())
+            return Result.Fail<decimal>("No tax was found according to the given criteria");
+
+        var amount =  result.First().TaxAmount();
+
+        return Result.Success<decimal>(amount);
+    }
+
+
+    //FIXME: - it can be moved to separate service to collect ITaxSheduler objects
+    private IEnumerable<ITaxSheduler> TaxSheduler(string municipality, DateTime date)
+    {
+        List<ITaxSheduler> shedulles = new()
+        {
+            new DailyTaxSheduler(_municipalityTaxRepository, municipality, date),
+            new WeeklyTaxSheduler(_municipalityTaxRepository, municipality, date),
+            new MonthlyTaxSheduller(_municipalityTaxRepository, municipality, date),
+            new YearlyTaxAheduler(_municipalityTaxRepository, municipality, date),
+        };
+
+        return shedulles;
+    }
+
+    
 }

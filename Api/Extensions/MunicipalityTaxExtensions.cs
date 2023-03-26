@@ -10,6 +10,7 @@ public static class MunicipalityTaxExtensions
     {
         return new MunicipalityTaxDto()
         {
+            Id = model.Id,
             MunicipalityTitle = model.MunicipalityTitle,
             TaxFrom = model.TaxFrom,
             TaxUp = model.TaxUp,

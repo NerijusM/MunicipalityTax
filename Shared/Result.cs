@@ -72,7 +72,6 @@ public class Result<T> : Result
         {
             if (!IsSuccess)
             {
-                //throw new InvalidOperationException();
                 return default;
             }
             return _value;

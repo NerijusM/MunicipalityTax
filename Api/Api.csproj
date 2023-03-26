@@ -22,4 +22,12 @@
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="ModelsDto\" />
+    <None Remove="Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ModelsDto\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
 </Project>

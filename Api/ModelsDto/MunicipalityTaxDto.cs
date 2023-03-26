@@ -31,7 +31,6 @@ public class MunicipalityTaxDto
             Tax = Tax,
             Type = Type
         };
-
     }
 }
 

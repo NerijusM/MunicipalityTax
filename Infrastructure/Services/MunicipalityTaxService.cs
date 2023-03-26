@@ -7,6 +7,7 @@ using Infrastructure.TaxShedulers;
 using Shared;
 
 namespace Infrastructure.Services;
+
 public class MunicipalityTaxService : IMunicipalityTaxService
 {
     private readonly IMunicipalityTaxRepository _municipalityTaxRepository;
@@ -70,13 +71,14 @@ public class MunicipalityTaxService : IMunicipalityTaxService
     {
         IEnumerable<ITaxSheduler> shedulles = TaxSheduler(title, date);
 
-        var result = shedulles.Where(x => x.IsUsed())
-                      .OrderBy(a => a.Type.Priority());
+        var result = shedulles
+                        .Where(x => x.IsUsed())
+                        .OrderBy(a => a.Type.Priority());
 
         if (!result.Any())
             return Result.Fail<decimal>("No tax was found according to the given criteria");
 
-        var amount =  result.First().TaxAmount();
+        var amount = result.First().TaxAmount();
 
         return Result.Success<decimal>(amount);
     }
@@ -95,6 +97,4 @@ public class MunicipalityTaxService : IMunicipalityTaxService
 
         return shedulles;
     }
-
-    
 }

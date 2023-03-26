@@ -5,9 +5,9 @@ namespace Infrastructure.Data;
 
 public class DataContext : DbContext
 {
+    DbSet<MunicipalityTax> MunicipalityTaxes { get; set; }
+
     public DataContext(DbContextOptions options) : base(options)
     {
     }
-
-    DbSet<MunicipalityTax> MunicipalityTaxes { get; set; }
 }

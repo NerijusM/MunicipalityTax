@@ -26,45 +26,25 @@ public class MunicipalityTaxService : IMunicipalityTaxService
 
     public async Task<Result> DeleteMunicipalityTax(MunicipalityTax municipalityTax)
     {
-        try
-        {
-            await _municipalityTaxRepository.DeleteAsync(municipalityTax);
-            return Result.Success();
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail($"(Error while deleting MunicipalityTax to db error: {ex.Message})");
-        }
+        await _municipalityTaxRepository.DeleteAsync(municipalityTax);
+        return Result.Success();
     }
 
 
     public async Task<Result> SaveMunicipalityTax(MunicipalityTax municipalityTax)
     {
-        try
-        {
+        // FIXME:- move this functionality to entity validation pipeline when implement CQRS
+        if (await IsHaveValueFor(municipalityTax))
+            return Result.Fail("The tax for this municipality already exists during that period. Please update the record");
 
-            if (await IsHaveValueFor(municipalityTax))
-                return Result.Fail("The tax for this municipality already exists during that period. Please update the post");
-            await _municipalityTaxRepository.AddAsync(municipalityTax);
-            return Result.Success();
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail($"(Error while writing MunicipalityTax to db error: {ex.Message})");
-        }
+        await _municipalityTaxRepository.AddAsync(municipalityTax);
+        return Result.Success();
     }
 
     public async Task<Result> UpdateMunicipalityTax(MunicipalityTax municipalityTax)
     {
-        try
-        {
-            var result = await _municipalityTaxRepository.UpdateMunicipalityTaxAsync(municipalityTax);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail($"(Error while updating MunicipalityTax to db error: {ex.Message})");
-        }
+        var result = await _municipalityTaxRepository.UpdateMunicipalityTaxAsync(municipalityTax);
+        return result;
     }
 
 

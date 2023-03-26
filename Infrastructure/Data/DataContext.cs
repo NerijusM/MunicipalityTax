@@ -9,5 +9,5 @@ public class DataContext : DbContext
     {
     }
 
-    DbSet<MunicipalityTax> MunicipalityTaxes;
+    DbSet<MunicipalityTax> MunicipalityTaxes { get; set; }
 }

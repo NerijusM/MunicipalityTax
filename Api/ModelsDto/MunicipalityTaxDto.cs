@@ -6,7 +6,7 @@ namespace Api.ModelsDto;
 
 public class MunicipalityTaxDto
 {
-    public string Id { get; set; } = string.Empty;
+    public int Id { get; set; } 
     public string MunicipalityTitle { get; set; } = string.Empty;
     public DateTime TaxFrom { get; set; }
     public DateTime TaxUp { get; set; }

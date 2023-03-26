@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Core.Types;
 
 namespace Core.Entities; 
@@ -6,7 +7,9 @@ namespace Core.Entities;
 public class MunicipalityTax
 {
 	[Key]
-	public string Id {get;set;} = Guid.NewGuid().ToString();
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id {get;set;}
+
 	public string MunicipalityTitle { get; set; } = string.Empty;
 	public DateTime TaxFrom { get; set; }
 	public DateTime TaxUp { get; set; }
@@ -18,11 +21,6 @@ public class MunicipalityTax
     public MunicipalityTax()
 	{
 		
-    }
-
-	public void SetNewId()
-	{
-        if (Id == string.Empty) { Id = Guid.NewGuid().ToString(); };
     }
 
 	public void UpdateValue(MunicipalityTax municipalityTax)
